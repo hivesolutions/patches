@@ -1,0 +1,182 @@
+diff -u Python-3.1.2/configure Python-3.1.2New/configure
+--- Python-3.1.2/configure	2010-03-11 08:28:52.000000000 +1000
++++ Python-3.1.2New/configure	2010-04-05 22:01:20.134817462 +1000
+@@ -22841,7 +22841,7 @@
+ # Multiprocessing check for broken sem_getvalue
+ { echo "$as_me:$LINENO: checking for broken sem_getvalue" >&5
+ echo $ECHO_N "checking for broken sem_getvalue... $ECHO_C" >&6; }
+-if test "$cross_compiling" = yes; then
++if test "$cross_compiling" = no; then
+   { { echo "$as_me:$LINENO: error: cannot run test program while cross compiling
+ See \`config.log' for more details." >&5
+ echo "$as_me: error: cannot run test program while cross compiling
+@@ -25570,7 +25570,7 @@
+ 
+ { echo "$as_me:$LINENO: checking for %zd printf() format support" >&5
+ echo $ECHO_N "checking for %zd printf() format support... $ECHO_C" >&6; }
+-if test "$cross_compiling" = yes; then
++if test "$cross_compiling" = no; then
+   { { echo "$as_me:$LINENO: error: cannot run test program while cross compiling
+ See \`config.log' for more details." >&5
+ echo "$as_me: error: cannot run test program while cross compiling
+diff -u Python-3.1.2/Makefile.pre.in Python-3.1.2New/Makefile.pre.in
+--- Python-3.1.2/Makefile.pre.in	2010-03-19 09:01:29.000000000 +1000
++++ Python-3.1.2New/Makefile.pre.in	2010-04-05 22:15:21.834806633 +1000
+@@ -177,6 +177,7 @@
+ 
+ PYTHON=		python$(EXE)
+ BUILDPYTHON=	python$(BUILDEXE)
++HOSTPYTHON=     ./$(BUILDPYTHON)
+ 
+ # The task to run while instrument when building the profile-opt target
+ PROFILE_TASK=	$(srcdir)/Tools/pybench/pybench.py -n 2 --with-gc --with-syscheck
+@@ -218,6 +219,8 @@
+ # Parser
+ PGEN=		Parser/pgen$(EXE)
+ 
++HOSTPGEN=   $(PGEN)
++
+ POBJS=		\
+ 		Parser/acceler.o \
+ 		Parser/grammar1.o \
+@@ -417,8 +420,8 @@
+ # Build the shared modules
+ sharedmods: $(BUILDPYTHON)
+ 	@case $$MAKEFLAGS in \
+-	*s*) $(RUNSHARED) CC='$(CC)' LDSHARED='$(BLDSHARED)' OPT='$(OPT)' ./$(BUILDPYTHON) -E $(srcdir)/setup.py -q build;; \
+-	*) $(RUNSHARED) CC='$(CC)' LDSHARED='$(BLDSHARED)' OPT='$(OPT)' ./$(BUILDPYTHON) -E $(srcdir)/setup.py build;; \
++	*s*) $(RUNSHARED) CC='$(CC)' LDSHARED='$(BLDSHARED)' OPT='$(OPT)' $(HOSTPYTHON) -E $(srcdir)/setup.py -q build;; \
++	*) $(RUNSHARED) CC='$(CC)' LDSHARED='$(BLDSHARED)' OPT='$(OPT)' $(HOSTPYTHON) -E $(srcdir)/setup.py build;; \
+ 	esac
+ 
+ # Build static library
+@@ -542,7 +545,7 @@
+ 
+ $(GRAMMAR_H) $(GRAMMAR_C): $(PGEN) $(GRAMMAR_INPUT)
+ 		-@$(INSTALL) -d Include
+-		-$(PGEN) $(GRAMMAR_INPUT) $(GRAMMAR_H) $(GRAMMAR_C)
++		-$(HOSTPGEN) $(GRAMMAR_INPUT) $(GRAMMAR_H) $(GRAMMAR_C)
+ 
+ $(PGEN):	$(PGENOBJS)
+ 		$(CC) $(OPT) $(LDFLAGS) $(PGENOBJS) $(LIBS) -o $(PGEN)
+@@ -909,25 +912,25 @@
+ 	done
+ 	$(INSTALL_DATA) $(srcdir)/LICENSE $(DESTDIR)$(LIBDEST)/LICENSE.txt
+ 	-PYTHONPATH=$(DESTDIR)$(LIBDEST)  $(RUNSHARED) \
+-		./$(BUILDPYTHON) -Wi $(DESTDIR)$(LIBDEST)/compileall.py \
++		$(HOSTPYTHON) -Wi $(DESTDIR)$(LIBDEST)/compileall.py \
+ 		-d $(LIBDEST) -f \
+ 		-x 'bad_coding|badsyntax|site-packages|lib2to3/tests/data' \
+ 		$(DESTDIR)$(LIBDEST)
+ 	-PYTHONPATH=$(DESTDIR)$(LIBDEST) $(RUNSHARED) \
+-		./$(BUILDPYTHON) -Wi -O $(DESTDIR)$(LIBDEST)/compileall.py \
++		$(HOSTPYTHON) -Wi -O $(DESTDIR)$(LIBDEST)/compileall.py \
+ 		-d $(LIBDEST) -f \
+ 		-x 'bad_coding|badsyntax|site-packages|lib2to3/tests/data' \
+ 		$(DESTDIR)$(LIBDEST)
+ 	-PYTHONPATH=$(DESTDIR)$(LIBDEST)  $(RUNSHARED) \
+-		./$(BUILDPYTHON) -Wi $(DESTDIR)$(LIBDEST)/compileall.py \
++		$(HOSTPYTHON) -Wi $(DESTDIR)$(LIBDEST)/compileall.py \
+ 		-d $(LIBDEST)/site-packages -f \
+ 		-x badsyntax $(DESTDIR)$(LIBDEST)/site-packages
+ 	-PYTHONPATH=$(DESTDIR)$(LIBDEST) $(RUNSHARED) \
+-		./$(BUILDPYTHON) -Wi -O $(DESTDIR)$(LIBDEST)/compileall.py \
++		$(HOSTPYTHON) -Wi -O $(DESTDIR)$(LIBDEST)/compileall.py \
+ 		-d $(LIBDEST)/site-packages -f \
+ 		-x badsyntax $(DESTDIR)$(LIBDEST)/site-packages
+ 	-PYTHONPATH=$(DESTDIR)$(LIBDEST) $(RUNSHARED) \
+-		./$(BUILDPYTHON) -Wi -c "import lib2to3.pygram, lib2to3.patcomp;lib2to3.patcomp.PatternCompiler()"
++		$(HOSTPYTHON) -Wi -c "import lib2to3.pygram, lib2to3.patcomp;lib2to3.patcomp.PatternCompiler()"
+ 
+ # Create the PLATDIR source directory, if one wasn't distributed..
+ $(srcdir)/Lib/$(PLATDIR):
+@@ -1019,12 +1022,14 @@
+ # Install the dynamically loadable modules
+ # This goes into $(exec_prefix)
+ sharedinstall:
+-	$(RUNSHARED) ./$(BUILDPYTHON) -E $(srcdir)/setup.py install \
++	CC='$(CC)' LDSHARED='$(BLDSHARED)' OPT='$(OPT)' CROSS_COMPILE='$(CROSS_COMPILE)' \
++	$(RUNSHARED) $(HOSTPYTHON) -E $(srcdir)/setup.py install \
+ 	   	--prefix=$(prefix) \
+ 		--install-scripts=$(BINDIR) \
+ 		--install-platlib=$(DESTSHARED) \
+ 		--root=/$(DESTDIR)
+ 
++
+ # Here are a couple of targets for MacOSX again, to install a full
+ # framework-based Python. frameworkinstall installs everything, the
+ # subtargets install specific parts. Much of the actual work is offloaded to
+diff -u Python-3.1.2/setup.py Python-3.1.2New/setup.py
+--- Python-3.1.2/setup.py	2010-01-02 02:29:51.000000000 +1000
++++ Python-3.1.2New/setup.py	2010-04-05 22:08:47.914817227 +1000
+@@ -16,7 +16,7 @@
+ from distutils.command.install_lib import install_lib
+ 
+ # This global variable is used to hold the list of modules to be disabled.
+-disabled_module_list = []
++disabled_module_list = ['_ctypes']
+ 
+ def add_dir_to_list(dirlist, dir):
+     """Add the directory 'dir' to the list 'dirlist' (at the front) if
+@@ -246,6 +246,8 @@
+             self.announce('WARNING: skipping import check for Cygwin-based "%s"'
+                 % ext.name)
+             return
++        if os.environ.get('CROSS_COMPILE_TARGET') == 'yes':
++            return
+         ext_filename = os.path.join(
+             self.build_lib,
+             self.get_ext_filename(self.get_ext_fullname(ext.name)))
+@@ -258,27 +260,31 @@
+         try:
+             imp.load_dynamic(ext.name, ext_filename)
+         except ImportError as why:
+-            self.failed.append(ext.name)
+-            self.announce('*** WARNING: renaming "%s" since importing it'
+-                          ' failed: %s' % (ext.name, why), level=3)
+-            assert not self.inplace
+-            basename, tail = os.path.splitext(ext_filename)
+-            newname = basename + "_failed" + tail
+-            if os.path.exists(newname):
+-                os.remove(newname)
+-            os.rename(ext_filename, newname)
+-
+-            # XXX -- This relies on a Vile HACK in
+-            # distutils.command.build_ext.build_extension().  The
+-            # _built_objects attribute is stored there strictly for
+-            # use here.
+-            # If there is a failure, _built_objects may not be there,
+-            # so catch the AttributeError and move on.
+-            try:
+-                for filename in self._built_objects:
+-                    os.remove(filename)
+-            except AttributeError:
+-                self.announce('unable to remove files (ignored)')
++            if os.environ.get('CROSS_COMPILE_TARGET') != "yes":
++                self.announce('*** WARNING: renaming "%s" since importing it'
++                              ' failed: %s' % (ext.name, why), level=3)
++                assert not self.inplace
++                basename, tail = os.path.splitext(ext_filename)
++                newname = basename + "_failed" + tail
++                if os.path.exists(newname):
++                    os.remove(newname)
++                os.rename(ext_filename, newname)
++
++                # XXX -- This relies on a Vile HACK in
++                # distutils.command.build_ext.build_extension().  The
++                # _built_objects attribute is stored there strictly for
++                # use here.
++                # If there is a failure, _built_objects may not be there,
++                # so catch the AttributeError and move on.
++                try:
++                    for filename in self._built_objects:
++                        os.remove(filename)
++                except AttributeError:
++                    self.announce('unable to remove files (ignored)')
++            else:
++                self.announce('WARNING: "%s" failed importing, but we leave it '
++                              'because we are cross-compiling' %
++                              ext.name)
+         except:
+             exc_type, why, tb = sys.exc_info()
+             self.announce('*** WARNING: importing extension "%s" '
