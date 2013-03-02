@@ -45,7 +45,7 @@ diff -uNr lua-5.1.5-orig/src/Makefile lua-5.1.5/src/Makefile
  	$(RANLIB) $@
  
 +$(LUA_SO): $(CORE_O) $(LIB_O)
-+	$(CC) -o $@ $(MYLDFLAGS) $(CFLAGS) -shared -ldl -lreadline -lhistory -lncurses -lm $?
++	$(CC) -o $@ $(MYLDFLAGS) $(CFLAGS) -Wl,-soname,liblua51.so.0 -shared -ldl -lreadline -lhistory -lncurses -lm $?
 +
  $(LUA_T): $(LUA_O) $(LUA_A)
 -	$(CC) -o $@ $(MYLDFLAGS) $(LUA_O) $(LUA_A) $(LIBS)
