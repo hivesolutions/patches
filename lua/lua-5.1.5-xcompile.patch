@@ -15,7 +15,7 @@ diff -uNr lua-5.1.5-orig/Makefile lua-5.1.5/Makefile
  TO_BIN= lua luac
  TO_INC= lua.h luaconf.h lualib.h lauxlib.h ../etc/lua.hpp
 -TO_LIB= liblua.a
-+TO_LIB= liblua.a liblua5.1.so.0
++TO_LIB= liblua.a liblua5.1.so.0.0.0
  TO_MAN= lua.1 luac.1
  
  # Lua version and release.
@@ -26,7 +26,7 @@ diff -uNr lua-5.1.5-orig/src/Makefile lua-5.1.5/src/Makefile
  RM= rm -f
  LIBS= -lm $(MYLIBS)
  
-+LUA_SO=liblua5.1.so.0
++LUA_SO=liblua5.1.so.0.0.0
 +
  MYCFLAGS=
  MYLDFLAGS=
