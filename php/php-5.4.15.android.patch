@@ -115,3 +115,14 @@ index 61088c4..f1a440d 100644
  #endif
  
  #if HAVE_SYS_TYPES_H
+diff --git a/ext/standard/formatted_print.c b/ext/standard/formatted_print.c
+index 61048c4..f1a450d 100644
+--- a/ext/standard/formatted_print.c
++++ b/ext/standard/formatted_print.c
+@@ -28,7 +28,7 @@
+-#ifdef HAVE_LOCALE_H
+-#include <locale.h>
+-#define LCONV_DECIMAL_POINT (*lconv->decimal_point)
+-#else
+ #define LCONV_DECIMAL_POINT '.'
+-#endif
