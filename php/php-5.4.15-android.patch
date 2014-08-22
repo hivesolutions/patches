@@ -34,7 +34,7 @@ index 3584fc1..fb5fea2 100644
  #endif
  /* }}} */
  
-+#include "../../../compat/nameser.h"
++#include <compat/nameser.h>
 +#define T_A DNS_T_A
 +#define T_ANY DNS_T_ANY
 +#define T_MX DNS_T_MX
