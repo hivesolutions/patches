@@ -120,9 +120,15 @@ index 61048c4..f1a450d 100644
 --- a/ext/standard/formatted_print.c
 +++ b/ext/standard/formatted_print.c
 @@ -28,7 +28,7 @@
+ #include "zend_execute.h"
+ #include <stdio.h>
+ 
 -#ifdef HAVE_LOCALE_H
 -#include <locale.h>
 -#define LCONV_DECIMAL_POINT (*lconv->decimal_point)
 -#else
  #define LCONV_DECIMAL_POINT '.'
 -#endif
+ 
+ #define ALIGN_LEFT 0
+ #define ALIGN_RIGHT 1
