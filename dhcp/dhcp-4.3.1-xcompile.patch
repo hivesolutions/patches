@@ -1,0 +1,12 @@
+diff -Naur dhcp-4.3.1.orig/bind/Makefile dhcp-4.3.0b1/bind/Makefile
+--- dhcp-4.3.1.orig/bind/Makefile	2014-01-15 20:21:11.000000000 -0800
++++ dhcp-4.3.1/bind/Makefile	2014-05-15 21:10:27.288424789 -0700
+@@ -52,7 +52,7 @@
+ 	else                                                       \
+ 		echo Configuring BIND Export libraries for DHCP. ; \
+ 		rm -rf ./lib ./include ./configure.log ./build.log ./install.log ; \
+-		(cd ${bindsrcdir} && ./configure --disable-kqueue --disable-epoll --disable-devpoll --without-openssl --without-libxml2 --enable-exportlib --enable-threads=no --with-export-includedir=${binddir}/include --with-export-libdir=${binddir}/lib --with-gssapi=no > ${binddir}/configure.log); \
++		(cd ${bindsrcdir} && ./configure --host=arm-linux-gnueabi --target=arm-linux-gnueabi --build=i686-pc-linux-gnu --disable-kqueue --disable-epoll --disable-devpoll --without-openssl --without-libxml2 --enable-exportlib --enable-threads=no --with-export-includedir=${binddir}/include --with-export-libdir=${binddir}/lib --with-gssapi=no --with-randomdev=/dev/random BUILD_CC=gcc > ${binddir}/configure.log); \
+ 	fi
+ 
+ # Build and install the export libraries
