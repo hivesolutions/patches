@@ -1,4 +1,4 @@
-diff -Nuar bind-9.9.5-P1.orig/lib/export/dns/Makefile.in bind-9.9.5rc1/lib/export/dns/Makefile.in
+diff -Nuar bind-9.9.5-P1.orig/lib/export/dns/Makefile.in bind-9.9.5-P1/lib/export/dns/Makefile.in
 --- bind-9.9.5-P1.orig/lib/export/dns/Makefile.in	2014-01-11 22:01:06.000000000 -0800
 +++ bind-9.9.5-P1/lib/export/dns/Makefile.in	2014-05-15 20:57:11.492432468 -0700
 @@ -168,7 +168,7 @@
