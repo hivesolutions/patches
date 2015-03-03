@@ -10,15 +10,6 @@ Index: Python-2.7.9/Makefile.pre.in
  
  PSRCS=		\
  		Parser/acceler.c \
-@@ -445,7 +446,7 @@ $(BUILDPYTHON):	Modules/python.o $(LIBRA
- 			$(BLDLIBRARY) $(LIBS) $(MODLIBS) $(SYSLIBS) $(LDLAST)
- 
- platform: $(BUILDPYTHON) pybuilddir.txt
--	$(RUNSHARED) $(PYTHON_FOR_BUILD) -c 'import sys ; from sysconfig import get_platform ; print get_platform()+"-"+sys.version[0:3]' >platform
-+	$(RUNSHARED) $(PYTHON_FOR_BUILD) -c 'import sys ; from sysconfig import get_platform ; print get_platform()+"-"+sys.version[0:3]' >platform
- 
- # Create build directory and generate the sysconfig build-time data there.
- # pybuilddir.txt contains the name of the build dir and is used for
 @@ -611,7 +612,7 @@ Modules/pwdmodule.o: $(srcdir)/Modules/p
  $(GRAMMAR_H): $(GRAMMAR_INPUT) $(PGENSRCS)
  		@$(MKDIR_P) Include
